@@ -87,3 +87,17 @@ def writeDuplicates(opponent):
                         n+=1
                 k+=1
         i+=1
+
+def addRoster(player,overall,position):
+        i=0
+        while i<len(roster[0]):
+            if roster[0][i]=='empty':
+                roster[0][i]=player
+                roster[1][i]=overall
+                roster[2][i]=position
+                i=len(roster[0])
+            elif i == len(roster[0])-1:
+                print('max roster size')
+            i+=1
+        changeRoster()
+        hideEmpty()
