@@ -820,4 +820,9 @@ draft()
     #Khris Middleton, Jaylen Brown, etc.(3rd or 4th)
     #Serge Ibaka, Draymond Green, Pascal Siakam*(3rd or 4th)
 
-    
+    #For ReadMe
+    #Network
+    #Trade
+    #Rankings Page(easy)---read from csv and order
+    #Schedule Page(easy)
+    #enter game results page

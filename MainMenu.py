@@ -2,7 +2,14 @@ import tkinter as tk
 import os
 import numpy as np
 import pandas as pd
-
+import Network
+"""
+run=True
+draft=False
+n=Network()
+win=[]
+win.append(int(n.getTeam()))
+"""
 HEIGHT=750
 WIDTH=1200
 draftorder=['Grizz','Grizz','Grizz','Kings','Grizz','Nuggets','test','test','test']
@@ -48,6 +55,24 @@ def openWindow():
     #not a great option here, label disapears on press
     #playername=tk.Label(f,text=)
     #playername.place(relx=0,rely=0,relwidth=0.5,relheight=1)
+"""
+
+"""
+def createMessage(pageType,bg):
+    return str(pageType)+','+bg
+
+def readMessage(message):
+    message = message.split(',')
+    return message
+
+def changeWindow(pageType):
+    if pageType == 0:
+        wait.place_forget()
+        frame.place(relx=0,rely=0,relwidth=1,relheight=1)
+
+    else:
+        frame.place_forget()
+        wait.place(relx=0,rely=0,relwidth=1,relheight=1)
 """
 
 #draft functions
@@ -612,6 +637,7 @@ def Lottery():
 def draftPage():
     homepage.place_forget()
     draftpage.place(relx=0,rely=0,relwidth=1,relheight=1)
+    #draft=True
 
 def progressPage():
     homepage.place_forget()
@@ -915,4 +941,16 @@ homebuttonz.pack()
 inprogresslabel=tk.Label(inprogressframe,text='Page in Progress')
 inprogresslabel.pack()
 
-root.mainloop() 
+root.update()
+"""
+n.connect()
+
+while run:
+    time.sleep(0.5)
+    data = n.send(createMessage(win[0],getColor()))
+    message = readMessage(data)
+    bg = message[1]
+    win[0]=int(message[0])
+    changeBackground(bg) 
+    root.update()
+"""
