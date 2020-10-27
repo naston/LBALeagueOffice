@@ -2,7 +2,7 @@ import tkinter as tk
 import os
 import numpy as np
 import pandas as pd
-import Network
+#import Network
 """
 run=True
 draft=False
@@ -941,7 +941,7 @@ homebuttonz.pack()
 inprogresslabel=tk.Label(inprogressframe,text='Page in Progress')
 inprogresslabel.pack()
 
-root.update()
+root.mainloop()
 """
 n.connect()
 

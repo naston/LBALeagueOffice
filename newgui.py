@@ -1,5 +1,9 @@
 import tkinter as tk            
 from tkinter import font as tkfont 
+from DraftPage import *
+from WIPPage import *
+from MainPage import *
+from ResultsPage import *
 
 class SampleApp(tk.Tk):
 
@@ -17,7 +21,7 @@ class SampleApp(tk.Tk):
         container.grid_columnconfigure(0, weight=1)
 
         self.frames = {}
-        for F in (StartPage, PageOne, PageTwo):
+        for F in (StartPage, PageOne, PageTwo, Draft, WIP, Home, Results):
             page_name = F.__name__
             frame = F(parent=container, controller=self)
             self.frames[page_name] = frame
@@ -47,8 +51,21 @@ class StartPage(tk.Frame):
                             command=lambda: controller.show_frame("PageOne"))
         button2 = tk.Button(self, text="Go to Page Two",
                             command=lambda: controller.show_frame("PageTwo"))
+        draftbutton = tk.Button(self, text="Go to Draft Test",
+                            command=lambda: controller.show_frame("Draft"))
+        testbutton = tk.Button(self, text="Go to WIP Test",
+                            command=lambda: controller.show_frame("WIP"))
+        homebutton = tk.Button(self, text="Go to Home Test",
+                            command=lambda: controller.show_frame("Home"))
+        resultsbutton = tk.Button(self, text="Go to Results Test",
+                            command=lambda: controller.show_frame("Results"))
+
         button1.pack()
         button2.pack()
+        draftbutton.pack()
+        testbutton.pack()
+        homebutton.pack()
+        resultsbutton.pack()
 
 
 class PageOne(tk.Frame):
@@ -77,5 +94,5 @@ class PageTwo(tk.Frame):
 
 if __name__ == "__main__":
     app = SampleApp()
-    app.wm_geometry("400x400")
+    app.wm_geometry("1200x1200")
     app.mainloop()
