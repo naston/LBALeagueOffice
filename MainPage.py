@@ -18,7 +18,7 @@ class Home(tk.Frame):
         self.version=tk.Frame(self.homepage,bg='black')
         self.version.place(relx=0,rely=.75,relwidth=1,relheight=.25)
         #left side home buttons
-        self.addResults=tk.Button(self.buttonLeft,text='Add Results',font=('Courier',20),command=lambda:controller.show_frame("WIP"))
+        self.addResults=tk.Button(self.buttonLeft,text='Add Results',font=('Courier',20),command=lambda:controller.show_frame("Results"))
         self.addResults.place(relx=0.1,rely=0.05,relwidth=0.8,relheight=0.2)
         self.createSeason=tk.Button(self.buttonLeft,text='Create Season',font=('Courier',20),command=lambda:controller.show_frame("WIP"))
         self.createSeason.place(relx=0.1,rely=0.30,relwidth=0.8,relheight=0.2)

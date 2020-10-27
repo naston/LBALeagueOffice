@@ -40,7 +40,6 @@ class Draft(tk.Frame):
         self.position_counter()
         self.search_bar()
 
-
     def start(self):
         i=0
         while i<len(df['Team']):

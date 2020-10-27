@@ -9,5 +9,5 @@ Scheduler.setWeeks()
 Scheduler.writeSchedule()
 """
 
-#SchedulerRedo.run()
-NewSeason.run()
+Scheduler.run()
+#NewSeason.run()

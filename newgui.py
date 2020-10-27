@@ -4,6 +4,10 @@ from DraftPage import *
 from WIPPage import *
 from MainPage import *
 from ResultsPage import *
+from StandingsPage import *
+from NewSeasonPage import *
+import NewSeason
+import time
 
 class SampleApp(tk.Tk):
 
@@ -21,7 +25,7 @@ class SampleApp(tk.Tk):
         container.grid_columnconfigure(0, weight=1)
 
         self.frames = {}
-        for F in (StartPage, PageOne, PageTwo, Draft, WIP, Home, Results):
+        for F in (StartPage, PageOne, PageTwo, Draft, WIP, Home, Results, Standings, CreatingNew, CreatedNew):
             page_name = F.__name__
             frame = F(parent=container, controller=self)
             self.frames[page_name] = frame
@@ -59,14 +63,26 @@ class StartPage(tk.Frame):
                             command=lambda: controller.show_frame("Home"))
         resultsbutton = tk.Button(self, text="Go to Results Test",
                             command=lambda: controller.show_frame("Results"))
-
+        standingsbutton = tk.Button(self, text="Go to Standings Test",
+                            command=lambda: controller.show_frame("Standings"))
+        newbutton = tk.Button(self, text="Go to New Season Test",
+                            command=lambda: self.newSeason())
         button1.pack()
         button2.pack()
         draftbutton.pack()
         testbutton.pack()
         homebutton.pack()
         resultsbutton.pack()
+        standingsbutton.pack()
+        newbutton.pack()
 
+
+    def newSeason(self):
+        self.controller.show_frame('CreatingNew')
+        time.sleep(1)
+        NewSeason.run()
+        time.sleep(2)
+        self.controller.show_frame('CreatedNew')
 
 class PageOne(tk.Frame):
 
