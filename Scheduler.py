@@ -1,65 +1,23 @@
+import pandas as pd
+import numpy as np
 import random
-import csv
 
+def run():
+    schedule = pd.read_csv('Schedule.csv')
+    max_week = schedule['Week'].max()
+    schedule['Week'] = schedule.apply(offset_weeks, args=(max_week,), axis = 1)
+    weeks = schedule['Week'].unique().tolist()
+    schedule = setWeeks(schedule,weeks,max_week)
+    schedule = schedule.sort_values(by=['Week'])
+    schedule.to_csv('Schedule.csv', index=False)
 
-previousSchedule = []
-newSchedule = []
-Weeks = []
-Games=[]
-#set temporary lists to previous year
-def start():
-    with open('Schedule.csv') as csvfile:
-        readCSV = csv.reader(csvfile, delimiter=',')
-        for row in readCSV:
-            previousSchedule.append(row)
-    i = 1
-    while i < len(previousSchedule[0]):
-        Weeks.append(i)  
-        i+=1
-    with open('Schedule.csv') as file1:
-        rCSV = csv.reader(file1,delimiter=',')
-        for row in rCSV:
-            newSchedule.append(row)
+def offset_weeks(row, offset):
+    return row['Week']+offset
 
-#changes values in newSchedule to random weeks from previousSchedule
-def setWeeks():
-    i=1
-    clearSchedule()
-    while len(Weeks)>0:
-        if len(Weeks)>1:
-            lastWeek=len(Weeks)-1
-            selectWeek = random.randint(1,lastWeek)
-            week = Weeks[selectWeek]
-            k=0
-        else:
-            week = Weeks[0]
-        k=0
-        while k<len(previousSchedule):
-            Games.append(previousSchedule[k][week])
-            k+=1
-        Weeks.remove(week)
-        n=0
-        while n<len(newSchedule):
-            newSchedule[n][i]=Games[n]
-            n+=1
-        i+=1
-        resetGames()
-
-#resets the list carrying a random week of games to empty
-def resetGames():
-    while len(Games)>0:
-        del Games[0]
-
-#clears last years schedule to take this years schedule        
-def clearSchedule():
-    f = open("Schedule.csv",'w')
-    f.truncate()
-    f.close()
-
-#write league schedule to csv
-def writeSchedule():
-    with open('Schedule.csv','w',newline='') as csvfile:
-        writeCSV=csv.writer(csvfile, delimiter=',')
-        for row in newSchedule:
-            writeCSV.writerow(row)
-            print(row)
+def setWeeks(df,week_list, max_week):
+    for i in range(1, max_week+1):
+        k = random.randint(0,len(week_list)-1)
+        week = week_list[k]
+        del week_list[k]
+        df.loc[df['Week']==week, 'Week']=i
+    return df
