@@ -1,6 +1,7 @@
 import csv
 import Scheduler
-import SchedulerRedo
+import Scheduler
+import NewSeason
 """
 #sets schedule to default and clears cache
 Scheduler.start()
@@ -8,4 +9,5 @@ Scheduler.setWeeks()
 Scheduler.writeSchedule()
 """
 
-SchedulerRedo.run()
+#SchedulerRedo.run()
+NewSeason.run()
