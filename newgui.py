@@ -78,6 +78,7 @@ class StartPage(tk.Frame):
 
 
     def newSeason(self):
+        #this page doesn't show rn
         self.controller.show_frame('CreatingNew')
         time.sleep(1)
         NewSeason.run()
@@ -112,3 +113,13 @@ if __name__ == "__main__":
     app = SampleApp()
     app.wm_geometry("1200x1200")
     app.mainloop()
+
+
+"""
+To Do:
+-implement bracket creation based upon standings
+-have current standings and add results switch to bracket mode when bracket is created
+-have create season swap to create bracket when season is completed
+-have create bracket swap to perform lottery when bracket is completed
+-make the lottery page
+"""

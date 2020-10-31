@@ -256,6 +256,7 @@ class Draft(tk.Frame):
         self.setInfoFrame()
 
     def changePlayer(self, player):
+        #here is a slight error
         df['Team'][indexes[player]]=draftorder[0]
         topten.clear()
         indexes.clear()

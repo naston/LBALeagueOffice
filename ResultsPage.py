@@ -275,14 +275,248 @@ class Results(tk.Frame):
         """
 
     def  writeStandings(self):
+        self.standings = self.standings.sort_values(by=['Wins'])
         self.standings.to_csv('Standings.csv', index=False)
         week = int((self.standings['Wins'].sum() + self.standings['Losses'].sum()) / len(self.standings)) + 1
         if week!=self.weekStatus['Week'].iloc[0]:
             self.newWeek(week)
             self.resultsWindow()
 
+class PlayoffResults(tk.Frame):
+    def __init__(self,parent,controller):
+        tk.Frame.__init__(self,parent)
+        self.controller = controller
+
+        self.homeButton = tk.Button(self,text='Home',command=lambda:self.home())#controller.show_frame("StartPage"))
+        self.homeButton.place(relx=0,rely=0,relwidth=0.05,relheight=0.1)
+        self.bracket = tk.Frame(self)
+        self.bracket.place(relx=0.05,rely=0,relwidth=0.95,relheight=1)
+        self.titlelabel=tk.Label(self.bracket,text='Playoff Bracket')
+        self.titlelabel.place(relx=0,rely=0,relwidth=1,relheight=0.1)
+
+        self.bracketWindow()
+    
+    def bracketWindow(self):
+        self.round1=tk.Frame(self.bracket)
+        self.round1.place(relx=0,rely=0,relwidth=0.33,relheight=1)
+        self.round2=tk.Frame(self.bracket)
+        self.round2.place(relx=0.33,rely=0,relwidth=0.33,relheight=1)
+        self.round3=tk.Frame(self.bracket)
+        self.round3.place(relx=0.66,rely=0,relwidth=0.33,relheight=1)
+
+        self.r1g1=tk.Frame(self.round1)
+        self.r1g2=tk.Frame(self.round1)
+        self.r1g3=tk.Frame(self.round1)
+        self.r1g4=tk.Frame(self.round1)
+
+        self.r1g1.place(relx=0.1,rely=0.04,relwidth=0.8,relheight=0.2)
+        self.r1g2.place(relx=0.1,rely=0.28,relwidth=0.8,relheight=0.2)
+        self.r1g3.place(relx=0.1,rely=0.52,relwidth=0.8,relheight=0.2)
+        self.r1g4.place(relx=0.1,rely=0.76,relwidth=0.8,relheight=0.2)
+
+        self.r2g1=tk.Frame(self.round2)
+        self.r2g2=tk.Frame(self.round2)
+
+        self.r2g1.place(relx=0.1,rely=0.16,relwidth=0.8, relheight=0.2)
+        self.r2g2.place(relx=0.1,rely=0.64,relwidth=0.8, relheight=0.2)
+        
+        self.r3g1=tk.Frame(self.round3)
+        self.r3g1.place(relx=0.1,rely=0.4,relwidth=0.8,relheight=0.2)
+
+        self.setCurrentRound()
+
+    def setCurrentRound(self):
+        self.getMatchups()
+        #self.matchups[(self.matchups['Team1']!='TBD')&(self.matchups['Team2']!='TBD')]
+        #grab the list of matchups and the current records
+        #from matchups grab the round
+        
+        #if the round is round one set the team labels for rounds 2 and 3 to tbd
+        #if round 2 then set round 3 to tbd
+        #for previous rounds they should be kept in the matchup df
+        #to get the wins in round 1 if wins >=4 then set to 4, if less than 4 set to that
+        #to get wins in round 2 if wins >=8 set to 4, if less than 8 set to x-4
+        #to get the wins in round 3 subtract 8 from total
+        
+        #set text for these labels
+        #create and place a button on top of label
+        self.r1g1t1 = tk.Label(self.r1g1)
+        self.r1g1t2 = tk.Label(self.r1g1)
+        self.r1g1r1 = tk.Label(self.r1g1)
+        self.r1g1r2 = tk.Label(self.r1g1)
+        self.r1g1w1 = tk.Label(self.r1g1)
+        self.r1g1w2 = tk.Label(self.r1g1)
+
+        self.r1g2t1 = tk.Label(self.r1g2)
+        self.r1g2t2 = tk.Label(self.r1g2)
+        self.r1g2r1 = tk.Label(self.r1g2)
+        self.r1g2r2 = tk.Label(self.r1g2)
+        self.r1g2w1 = tk.Label(self.r1g2)
+        self.r1g2w2 = tk.Label(self.r1g2)
+
+        self.r1g3t1 = tk.Label(self.r1g3)
+        self.r1g3t2 = tk.Label(self.r1g3)
+        self.r1g3r1 = tk.Label(self.r1g3)
+        self.r1g3r2 = tk.Label(self.r1g3)
+        self.r1g3w1 = tk.Label(self.r1g3)
+        self.r1g3w2 = tk.Label(self.r1g3)
+
+        self.r1g4t1 = tk.Label(self.r1g4)
+        self.r1g4t2 = tk.Label(self.r1g4)
+        self.r1g4r1 = tk.Label(self.r1g4)
+        self.r1g4r2 = tk.Label(self.r1g4)
+        self.r1g4w1 = tk.Label(self.r1g4)
+        self.r1g4w2 = tk.Label(self.r1g4)
+
+        self.r2g1t1 = tk.Label(self.r2g1)
+        self.r2g1t2 = tk.Label(self.r2g1)
+        self.r2g1r1 = tk.Label(self.r2g1)
+        self.r2g1r2 = tk.Label(self.r2g1)
+        self.r2g1w1 = tk.Label(self.r2g1)
+        self.r2g1w2 = tk.Label(self.r2g1)
+
+        self.r2g2t1 = tk.Label(self.r2g2)
+        self.r2g2t2 = tk.Label(self.r2g2)
+        self.r2g2r1 = tk.Label(self.r2g2)
+        self.r2g2r2 = tk.Label(self.r2g2)
+        self.r2g2w1 = tk.Label(self.r2g2)
+        self.r2g2w2 = tk.Label(self.r2g2)
 
 
+        self.r3g1t1 = tk.Label(self.r3g1)
+        self.r3g1t2 = tk.Label(self.r3g1)
+        self.r3g1r1 = tk.Label(self.r3g1)
+        self.r3g1r2 = tk.Label(self.r3g1)
+        self.r3g1w1 = tk.Label(self.r3g1)
+        self.r3g1w2 = tk.Label(self.r3g1)
+
+        
+
+        self.r1g1t1.place(relx=0.1,rely=0,relwidth=0.7,relheight=0.5)
+        self.r1g1t2.place(relx=0.1,rely=0.5,relwidth=0.7,relheight=0.5)
+        self.r1g1r1.place(relx=0,rely=0,relwidth=0.1,relheight=0.5)
+        self.r1g1r2.place(relx=0,rely=0.5,relwidth=0.1,relheight=0.5)
+        self.r1g1w1.place(relx=0.8,rely=0,relwidth=0.2,relheight=0.5)
+        self.r1g1w2.place(relx=0.8,rely=0.5,relwidth=0.2,relheight=0.5)
+
+        self.r1g2t1.place(relx=0.1,rely=0,relwidth=0.7,relheight=0.5)
+        self.r1g2t2.place(relx=0.1,rely=0.5,relwidth=0.7,relheight=0.5)
+        self.r1g2r1.place(relx=0,rely=0,relwidth=0.1,relheight=0.5)
+        self.r1g2r2.place(relx=0,rely=0.5,relwidth=0.1,relheight=0.5)
+        self.r1g2w1.place(relx=0.8,rely=0,relwidth=0.2,relheight=0.5)
+        self.r1g2w2.place(relx=0.8,rely=0.5,relwidth=0.2,relheight=0.5)
+
+        self.r1g3t1.place(relx=0.1,rely=0,relwidth=0.7,relheight=0.5)
+        self.r1g3t2.place(relx=0.1,rely=0.5,relwidth=0.7,relheight=0.5)
+        self.r1g3r1.place(relx=0,rely=0,relwidth=0.1,relheight=0.5)
+        self.r1g3r2.place(relx=0,rely=0.5,relwidth=0.1,relheight=0.5)
+        self.r1g3w1.place(relx=0.8,rely=0,relwidth=0.2,relheight=0.5)
+        self.r1g3w2.place(relx=0.8,rely=0.5,relwidth=0.2,relheight=0.5)
+
+        self.r1g4t1.place(relx=0.1,rely=0,relwidth=0.7,relheight=0.5)
+        self.r1g4t2.place(relx=0.1,rely=0.5,relwidth=0.7,relheight=0.5)
+        self.r1g4r1.place(relx=0,rely=0,relwidth=0.1,relheight=0.5)
+        self.r1g4r2.place(relx=0,rely=0.5,relwidth=0.1,relheight=0.5)
+        self.r1g4w1.place(relx=0.8,rely=0,relwidth=0.2,relheight=0.5)
+        self.r1g4w2.place(relx=0.8,rely=0.5,relwidth=0.2,relheight=0.5)
+
+
+        self.r2g1t1.place(relx=0.1,rely=0,relwidth=0.7,relheight=0.5)
+        self.r2g1t2.place(relx=0.1,rely=0.5,relwidth=0.7,relheight=0.5)
+        self.r2g1r1.place(relx=0,rely=0,relwidth=0.1,relheight=0.5)
+        self.r2g1r2.place(relx=0,rely=0.5,relwidth=0.1,relheight=0.5)
+        self.r2g1w1.place(relx=0.8,rely=0,relwidth=0.2,relheight=0.5)
+        self.r2g1w2.place(relx=0.8,rely=0.5,relwidth=0.2,relheight=0.5)
+
+        self.r2g2t1.place(relx=0.1,rely=0,relwidth=0.7,relheight=0.5)
+        self.r2g2t2.place(relx=0.1,rely=0.5,relwidth=0.7,relheight=0.5)
+        self.r2g2r1.place(relx=0,rely=0,relwidth=0.1,relheight=0.5)
+        self.r2g2r2.place(relx=0,rely=0.5,relwidth=0.1,relheight=0.5)
+        self.r2g2w1.place(relx=0.8,rely=0,relwidth=0.2,relheight=0.5)
+        self.r2g2w2.place(relx=0.8,rely=0.5,relwidth=0.2,relheight=0.5)
+
+
+        self.r3g1t1.place(relx=0.1,rely=0,relwidth=0.7,relheight=0.5)
+        self.r3g1t2.place(relx=0.1,rely=0.5,relwidth=0.7,relheight=0.5)
+        self.r3g1r1.place(relx=0,rely=0,relwidth=0.1,relheight=0.5)
+        self.r3g1r2.place(relx=0,rely=0.5,relwidth=0.1,relheight=0.5)
+        self.r3g1w1.place(relx=0.8,rely=0,relwidth=0.2,relheight=0.5)
+        self.r3g1w2.place(relx=0.8,rely=0.5,relwidth=0.2,relheight=0.5)
+        #instantiate buttons here
+        self.createButtons()
+
+    def createButtons(self):
+        #if neither name in the round is tbd and neither team has 4 wins then show buttons for that round
+        return
+
+    def setResults(self, round_num, game, team):
+        if round_num == 1:
+            if game == 1:
+                #forget the button
+                if team == 1:
+                    #add 1 to team 1s wins in gui and matchups df
+                    #if wins == 4 then move team on to next round
+                    return
+                else:
+                    #add 1 to team 2s wins
+                    return
+            elif game ==2:
+                if team == 1:
+                    #add 1 to team 1s wins
+                    return
+                else:
+                    #add 1 to team 2s wins
+                    return
+            elif game ==3:
+                if team == 1:
+                    #add 1 to team 1s wins
+                    return
+                else:
+                    #add 1 to team 2s wins
+                    return
+            else:
+                if team == 1:
+                    #add 1 to team 1s wins
+                    return
+                else:
+                    #add 1 to team 2s wins
+                    return
+        elif round_num == 2:
+            if game == 1:
+                if team == 1:
+                    #add 1 to team 1s wins
+                    return
+                else:
+                    #add 1 to team 2s wins
+                    return
+            else:
+                if team == 1:
+                    #add 1 to team 1s wins
+                    return
+                else:
+                    #add 1 to team 2s wins
+                    return
+        else:
+                if game == 1:
+                    if team == 1:
+                        #add 1 to team 1s wins
+                        return
+                    else:
+                        #add 1 to team 2s wins
+                        return
+
+        #here when i click on the wins button i want to place forget the buttons and replace them with labels
+        #if the wins bar goes to 4 then I want to move them to the next round
+        #at the end of this I want to go back and show any buttons 
+        return
+
+    def getMatchups(self):
+        self.matchups = pd.read_csv('PlayoffSchedule.csv')
+
+    def getRecords(self):
+        #grab the playoff df
+        #deprecate this
+        return
 """
 To Do:
 -fix scheduler to be in different format
