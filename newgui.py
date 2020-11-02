@@ -6,6 +6,7 @@ from MainPage import *
 from ResultsPage import *
 from StandingsPage import *
 from NewSeasonPage import *
+from LotteryPage import *
 import NewSeason
 import time
 
@@ -25,7 +26,7 @@ class SampleApp(tk.Tk):
         container.grid_columnconfigure(0, weight=1)
 
         self.frames = {}
-        for F in (StartPage, PageOne, PageTwo, Draft, WIP, Home, Results, Standings, CreatingNew, CreatedNew, PlayoffResults):
+        for F in (StartPage, PageOne, PageTwo, Draft, WIP, Home, Results, Standings, CreatingNew, CreatedNew, PlayoffResults, Lottery):
             page_name = F.__name__
             frame = F(parent=container, controller=self)
             self.frames[page_name] = frame
@@ -67,8 +68,10 @@ class StartPage(tk.Frame):
                             command=lambda: controller.show_frame("Standings"))
         newbutton = tk.Button(self, text="Go to New Season Test",
                             command=lambda: self.newSeason())
-        playbutton = tk.Button(self, text="Go to New Season Test",
+        playbutton = tk.Button(self, text="Go to Bracket Test",
                             command=lambda: controller.show_frame("PlayoffResults"))
+        lottobutton = tk.Button(self, text="Go to Lottery Test",
+                            command=lambda: controller.show_frame("Lottery"))
         button1.pack()
         button2.pack()
         draftbutton.pack()
@@ -78,6 +81,7 @@ class StartPage(tk.Frame):
         standingsbutton.pack()
         newbutton.pack()
         playbutton.pack()
+        lottobutton.pack()
 
 
     def newSeason(self):
@@ -120,7 +124,6 @@ if __name__ == "__main__":
 
 """
 To Do:
--implement bracket creation based upon standings
 -have current standings and add results switch to bracket mode when bracket is created
 -have create season swap to create bracket when season is completed
 -have create bracket swap to perform lottery when bracket is completed

@@ -291,9 +291,9 @@ class PlayoffResults(tk.Frame):
         self.homeButton = tk.Button(self,text='Home',command=lambda:controller.show_frame("StartPage"))
         self.homeButton.place(relx=0,rely=0,relwidth=0.05,relheight=0.1)
         self.bracket = tk.Frame(self)
-        self.bracket.place(relx=0.05,rely=0,relwidth=0.95,relheight=1)
-        self.titlelabel=tk.Label(self.bracket,text='Playoff Bracket')
-        self.titlelabel.place(relx=0,rely=0,relwidth=1,relheight=0.1)
+        self.bracket.place(relx=0.05,rely=0.1,relwidth=0.95,relheight=1)
+        self.titlelabel=tk.Label(self,text='Playoff Bracket')
+        self.titlelabel.place(relx=0.05,rely=0,relwidth=0.95,relheight=0.1)
         self.matchups = self.getMatchups()
         self.bracketWindow()
     
