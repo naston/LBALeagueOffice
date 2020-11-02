@@ -275,7 +275,8 @@ class Results(tk.Frame):
         """
 
     def  writeStandings(self):
-        self.standings = self.standings.sort_values(by=['Wins'])
+        #invert this sort pls
+        self.standings = self.standings.sort_values(by=['Wins'],ascending=False)
         self.standings.to_csv('Standings.csv', index=False)
         week = int((self.standings['Wins'].sum() + self.standings['Losses'].sum()) / len(self.standings)) + 1
         if week!=self.weekStatus['Week'].iloc[0]:
@@ -287,13 +288,13 @@ class PlayoffResults(tk.Frame):
         tk.Frame.__init__(self,parent)
         self.controller = controller
 
-        self.homeButton = tk.Button(self,text='Home',command=lambda:self.home())#controller.show_frame("StartPage"))
+        self.homeButton = tk.Button(self,text='Home',command=lambda:controller.show_frame("StartPage"))
         self.homeButton.place(relx=0,rely=0,relwidth=0.05,relheight=0.1)
         self.bracket = tk.Frame(self)
         self.bracket.place(relx=0.05,rely=0,relwidth=0.95,relheight=1)
         self.titlelabel=tk.Label(self.bracket,text='Playoff Bracket')
         self.titlelabel.place(relx=0,rely=0,relwidth=1,relheight=0.1)
-
+        self.matchups = self.getMatchups()
         self.bracketWindow()
     
     def bracketWindow(self):
@@ -326,71 +327,56 @@ class PlayoffResults(tk.Frame):
         self.setCurrentRound()
 
     def setCurrentRound(self):
-        self.getMatchups()
-        #self.matchups[(self.matchups['Team1']!='TBD')&(self.matchups['Team2']!='TBD')]
-        #grab the list of matchups and the current records
-        #from matchups grab the round
-        
-        #if the round is round one set the team labels for rounds 2 and 3 to tbd
-        #if round 2 then set round 3 to tbd
-        #for previous rounds they should be kept in the matchup df
-        #to get the wins in round 1 if wins >=4 then set to 4, if less than 4 set to that
-        #to get wins in round 2 if wins >=8 set to 4, if less than 8 set to x-4
-        #to get the wins in round 3 subtract 8 from total
-        
-        #set text for these labels
-        #create and place a button on top of label
-        self.r1g1t1 = tk.Label(self.r1g1)
-        self.r1g1t2 = tk.Label(self.r1g1)
-        self.r1g1r1 = tk.Label(self.r1g1)
-        self.r1g1r2 = tk.Label(self.r1g1)
-        self.r1g1w1 = tk.Label(self.r1g1)
-        self.r1g1w2 = tk.Label(self.r1g1)
+        self.r1g1t1 = tk.Label(self.r1g1,text=self.matchups[(self.matchups['Round']==1) & (self.matchups['Game']==1)].iloc[0]['Team1'])
+        self.r1g1t2 = tk.Label(self.r1g1,text=self.matchups[(self.matchups['Round']==1) & (self.matchups['Game']==1)].iloc[0]['Team2'])
+        self.r1g1r1 = tk.Label(self.r1g1,text=self.matchups[(self.matchups['Round']==1) & (self.matchups['Game']==1)].iloc[0]['Rank1'])
+        self.r1g1r2 = tk.Label(self.r1g1,text=self.matchups[(self.matchups['Round']==1) & (self.matchups['Game']==1)].iloc[0]['Rank2'])
+        self.r1g1w1 = tk.Label(self.r1g1,text=self.matchups[(self.matchups['Round']==1) & (self.matchups['Game']==1)].iloc[0]['Win1'])
+        self.r1g1w2 = tk.Label(self.r1g1,text=self.matchups[(self.matchups['Round']==1) & (self.matchups['Game']==1)].iloc[0]['Win2'])
 
-        self.r1g2t1 = tk.Label(self.r1g2)
-        self.r1g2t2 = tk.Label(self.r1g2)
-        self.r1g2r1 = tk.Label(self.r1g2)
-        self.r1g2r2 = tk.Label(self.r1g2)
-        self.r1g2w1 = tk.Label(self.r1g2)
-        self.r1g2w2 = tk.Label(self.r1g2)
+        self.r1g2t1 = tk.Label(self.r1g2,text=self.matchups[(self.matchups['Round']==1) & (self.matchups['Game']==2)].iloc[0]['Team1'])
+        self.r1g2t2 = tk.Label(self.r1g2,text=self.matchups[(self.matchups['Round']==1) & (self.matchups['Game']==2)].iloc[0]['Team2'])
+        self.r1g2r1 = tk.Label(self.r1g2,text=self.matchups[(self.matchups['Round']==1) & (self.matchups['Game']==2)].iloc[0]['Rank1'])
+        self.r1g2r2 = tk.Label(self.r1g2,text=self.matchups[(self.matchups['Round']==1) & (self.matchups['Game']==2)].iloc[0]['Rank2'])
+        self.r1g2w1 = tk.Label(self.r1g2,text=self.matchups[(self.matchups['Round']==1) & (self.matchups['Game']==2)].iloc[0]['Win1'])
+        self.r1g2w2 = tk.Label(self.r1g2,text=self.matchups[(self.matchups['Round']==1) & (self.matchups['Game']==2)].iloc[0]['Win2'])
 
-        self.r1g3t1 = tk.Label(self.r1g3)
-        self.r1g3t2 = tk.Label(self.r1g3)
-        self.r1g3r1 = tk.Label(self.r1g3)
-        self.r1g3r2 = tk.Label(self.r1g3)
-        self.r1g3w1 = tk.Label(self.r1g3)
-        self.r1g3w2 = tk.Label(self.r1g3)
+        self.r1g3t1 = tk.Label(self.r1g3,text=self.matchups[(self.matchups['Round']==1) & (self.matchups['Game']==3)].iloc[0]['Team1'])
+        self.r1g3t2 = tk.Label(self.r1g3,text=self.matchups[(self.matchups['Round']==1) & (self.matchups['Game']==3)].iloc[0]['Team2'])
+        self.r1g3r1 = tk.Label(self.r1g3,text=self.matchups[(self.matchups['Round']==1) & (self.matchups['Game']==3)].iloc[0]['Rank1'])
+        self.r1g3r2 = tk.Label(self.r1g3,text=self.matchups[(self.matchups['Round']==1) & (self.matchups['Game']==3)].iloc[0]['Rank2'])
+        self.r1g3w1 = tk.Label(self.r1g3,text=self.matchups[(self.matchups['Round']==1) & (self.matchups['Game']==3)].iloc[0]['Win1'])
+        self.r1g3w2 = tk.Label(self.r1g3,text=self.matchups[(self.matchups['Round']==1) & (self.matchups['Game']==3)].iloc[0]['Win2'])
 
-        self.r1g4t1 = tk.Label(self.r1g4)
-        self.r1g4t2 = tk.Label(self.r1g4)
-        self.r1g4r1 = tk.Label(self.r1g4)
-        self.r1g4r2 = tk.Label(self.r1g4)
-        self.r1g4w1 = tk.Label(self.r1g4)
-        self.r1g4w2 = tk.Label(self.r1g4)
+        self.r1g4t1 = tk.Label(self.r1g4,text=self.matchups[(self.matchups['Round']==1) & (self.matchups['Game']==4)].iloc[0]['Team1'])
+        self.r1g4t2 = tk.Label(self.r1g4,text=self.matchups[(self.matchups['Round']==1) & (self.matchups['Game']==4)].iloc[0]['Team2'])
+        self.r1g4r1 = tk.Label(self.r1g4,text=self.matchups[(self.matchups['Round']==1) & (self.matchups['Game']==4)].iloc[0]['Rank1'])
+        self.r1g4r2 = tk.Label(self.r1g4,text=self.matchups[(self.matchups['Round']==1) & (self.matchups['Game']==4)].iloc[0]['Rank2'])
+        self.r1g4w1 = tk.Label(self.r1g4,text=self.matchups[(self.matchups['Round']==1) & (self.matchups['Game']==4)].iloc[0]['Win1'])
+        self.r1g4w2 = tk.Label(self.r1g4,text=self.matchups[(self.matchups['Round']==1) & (self.matchups['Game']==4)].iloc[0]['Win2'])
 
-        self.r2g1t1 = tk.Label(self.r2g1)
-        self.r2g1t2 = tk.Label(self.r2g1)
-        self.r2g1r1 = tk.Label(self.r2g1)
-        self.r2g1r2 = tk.Label(self.r2g1)
-        self.r2g1w1 = tk.Label(self.r2g1)
-        self.r2g1w2 = tk.Label(self.r2g1)
+        self.r2g1t1 = tk.Label(self.r2g1,text=self.matchups[(self.matchups['Round']==2) & (self.matchups['Game']==1)].iloc[0]['Team1'])
+        self.r2g1t2 = tk.Label(self.r2g1,text=self.matchups[(self.matchups['Round']==2) & (self.matchups['Game']==1)].iloc[0]['Team2'])
+        self.r2g1r1 = tk.Label(self.r2g1,text=self.matchups[(self.matchups['Round']==2) & (self.matchups['Game']==1)].iloc[0]['Rank1'])
+        self.r2g1r2 = tk.Label(self.r2g1,text=self.matchups[(self.matchups['Round']==2) & (self.matchups['Game']==1)].iloc[0]['Rank2'])
+        self.r2g1w1 = tk.Label(self.r2g1,text=self.matchups[(self.matchups['Round']==2) & (self.matchups['Game']==1)].iloc[0]['Win1'])
+        self.r2g1w2 = tk.Label(self.r2g1,text=self.matchups[(self.matchups['Round']==2) & (self.matchups['Game']==1)].iloc[0]['Win2'])
 
-        self.r2g2t1 = tk.Label(self.r2g2)
-        self.r2g2t2 = tk.Label(self.r2g2)
-        self.r2g2r1 = tk.Label(self.r2g2)
-        self.r2g2r2 = tk.Label(self.r2g2)
-        self.r2g2w1 = tk.Label(self.r2g2)
-        self.r2g2w2 = tk.Label(self.r2g2)
+        self.r2g2t1 = tk.Label(self.r2g2,text=self.matchups[(self.matchups['Round']==2) & (self.matchups['Game']==2)].iloc[0]['Team1'])
+        self.r2g2t2 = tk.Label(self.r2g2,text=self.matchups[(self.matchups['Round']==2) & (self.matchups['Game']==2)].iloc[0]['Team2'])
+        self.r2g2r1 = tk.Label(self.r2g2,text=self.matchups[(self.matchups['Round']==2) & (self.matchups['Game']==2)].iloc[0]['Rank1'])
+        self.r2g2r2 = tk.Label(self.r2g2,text=self.matchups[(self.matchups['Round']==2) & (self.matchups['Game']==2)].iloc[0]['Rank2'])
+        self.r2g2w1 = tk.Label(self.r2g2,text=self.matchups[(self.matchups['Round']==2) & (self.matchups['Game']==2)].iloc[0]['Win1'])
+        self.r2g2w2 = tk.Label(self.r2g2,text=self.matchups[(self.matchups['Round']==2) & (self.matchups['Game']==2)].iloc[0]['Win2'])
 
 
-        self.r3g1t1 = tk.Label(self.r3g1)
-        self.r3g1t2 = tk.Label(self.r3g1)
-        self.r3g1r1 = tk.Label(self.r3g1)
-        self.r3g1r2 = tk.Label(self.r3g1)
-        self.r3g1w1 = tk.Label(self.r3g1)
-        self.r3g1w2 = tk.Label(self.r3g1)
+        self.r3g1t1 = tk.Label(self.r3g1,text=self.matchups[(self.matchups['Round']==3) & (self.matchups['Game']==1)].iloc[0]['Team1'])
+        self.r3g1t2 = tk.Label(self.r3g1,text=self.matchups[(self.matchups['Round']==3) & (self.matchups['Game']==1)].iloc[0]['Team2'])
+        self.r3g1r1 = tk.Label(self.r3g1,text=self.matchups[(self.matchups['Round']==3) & (self.matchups['Game']==1)].iloc[0]['Rank1'])
+        self.r3g1r2 = tk.Label(self.r3g1,text=self.matchups[(self.matchups['Round']==3) & (self.matchups['Game']==1)].iloc[0]['Rank2'])
+        self.r3g1w1 = tk.Label(self.r3g1,text=self.matchups[(self.matchups['Round']==3) & (self.matchups['Game']==1)].iloc[0]['Win1'])
+        self.r3g1w2 = tk.Label(self.r3g1,text=self.matchups[(self.matchups['Round']==3) & (self.matchups['Game']==1)].iloc[0]['Win2'])
 
-        
 
         self.r1g1t1.place(relx=0.1,rely=0,relwidth=0.7,relheight=0.5)
         self.r1g1t2.place(relx=0.1,rely=0.5,relwidth=0.7,relheight=0.5)
@@ -443,85 +429,210 @@ class PlayoffResults(tk.Frame):
         self.r3g1w1.place(relx=0.8,rely=0,relwidth=0.2,relheight=0.5)
         self.r3g1w2.place(relx=0.8,rely=0.5,relwidth=0.2,relheight=0.5)
         #instantiate buttons here
+        self.r1g1b1 = tk.Button(self.r1g1,text=self.matchups[(self.matchups['Round']==1) & (self.matchups['Game']==1)].iloc[0]['Win1'],command=lambda:self.setResults(1,1,1))
+        self.r1g1b2 = tk.Button(self.r1g1,text=self.matchups[(self.matchups['Round']==1) & (self.matchups['Game']==1)].iloc[0]['Win2'],command=lambda:self.setResults(1,1,2))
+        self.r1g2b1 = tk.Button(self.r1g2,text=self.matchups[(self.matchups['Round']==1) & (self.matchups['Game']==2)].iloc[0]['Win1'],command=lambda:self.setResults(1,2,1))
+        self.r1g2b2 = tk.Button(self.r1g2,text=self.matchups[(self.matchups['Round']==1) & (self.matchups['Game']==2)].iloc[0]['Win2'],command=lambda:self.setResults(1,2,2))
+        self.r1g3b1 = tk.Button(self.r1g3,text=self.matchups[(self.matchups['Round']==1) & (self.matchups['Game']==3)].iloc[0]['Win1'],command=lambda:self.setResults(1,3,1))
+        self.r1g3b2 = tk.Button(self.r1g3,text=self.matchups[(self.matchups['Round']==1) & (self.matchups['Game']==3)].iloc[0]['Win2'],command=lambda:self.setResults(1,3,2))
+        self.r1g4b1 = tk.Button(self.r1g4,text=self.matchups[(self.matchups['Round']==1) & (self.matchups['Game']==4)].iloc[0]['Win1'],command=lambda:self.setResults(1,4,1))
+        self.r1g4b2 = tk.Button(self.r1g4,text=self.matchups[(self.matchups['Round']==1) & (self.matchups['Game']==4)].iloc[0]['Win2'],command=lambda:self.setResults(1,4,2))
+        self.r2g1b1 = tk.Button(self.r2g1,text=self.matchups[(self.matchups['Round']==2) & (self.matchups['Game']==1)].iloc[0]['Win1'],command=lambda:self.setResults(2,1,1))
+        self.r2g1b2 = tk.Button(self.r2g1,text=self.matchups[(self.matchups['Round']==2) & (self.matchups['Game']==1)].iloc[0]['Win2'],command=lambda:self.setResults(2,1,2))
+        self.r2g2b1 = tk.Button(self.r2g2,text=self.matchups[(self.matchups['Round']==2) & (self.matchups['Game']==2)].iloc[0]['Win1'],command=lambda:self.setResults(2,2,1))
+        self.r2g2b2 = tk.Button(self.r2g2,text=self.matchups[(self.matchups['Round']==2) & (self.matchups['Game']==2)].iloc[0]['Win2'],command=lambda:self.setResults(2,2,2))
+        self.r3g1b1 = tk.Button(self.r3g1,text=self.matchups[(self.matchups['Round']==3) & (self.matchups['Game']==1)].iloc[0]['Win1'],command=lambda:self.setResults(3,1,1))
+        self.r3g1b2 = tk.Button(self.r3g1,text=self.matchups[(self.matchups['Round']==3) & (self.matchups['Game']==1)].iloc[0]['Win2'],command=lambda:self.setResults(3,1,2))
+
         self.createButtons()
 
     def createButtons(self):
-        #if neither name in the round is tbd and neither team has 4 wins then show buttons for that round
-        return
+        if ((self.r1g1t1['text']!='TBD') & (self.r1g1t2['text']!='TBD') & (self.r1g1w1['text'] != '4') & (self.r1g1w2['text'] != '4')):
+            self.r1g1b1.place(relx=0.8,rely=0,relwidth=0.2,relheight=0.5)
+            self.r1g1b2.place(relx=0.8,rely=0.5,relwidth=0.2,relheight=0.5)
+        if ((self.r1g2t1['text']!='TBD') & (self.r1g2t2['text']!='TBD') & (self.r1g2w1['text'] != '4') & (self.r1g2w2['text'] != '4')):
+            self.r1g2b1.place(relx=0.8,rely=0,relwidth=0.2,relheight=0.5)
+            self.r1g2b2.place(relx=0.8,rely=0.5,relwidth=0.2,relheight=0.5)
+        if ((self.r1g3t1['text']!='TBD') & (self.r1g3t2['text']!='TBD') & (self.r1g3w1['text'] != '4') & (self.r1g3w2['text'] != '4')):
+            self.r1g3b1.place(relx=0.8,rely=0,relwidth=0.2,relheight=0.5)
+            self.r1g3b2.place(relx=0.8,rely=0.5,relwidth=0.2,relheight=0.5)
+        if ((self.r1g4t1['text']!='TBD') & (self.r1g4t2['text']!='TBD') & (self.r1g4w1['text'] != '4') & (self.r1g4w2['text'] != '4')):
+            self.r1g4b1.place(relx=0.8,rely=0,relwidth=0.2,relheight=0.5)
+            self.r1g4b2.place(relx=0.8,rely=0.5,relwidth=0.2,relheight=0.5)
+
+        if ((self.r2g1t1['text']!='TBD') & (self.r2g1t2['text']!='TBD') & (self.r2g1w1['text'] != '4') & (self.r2g1w2['text'] != '4')):
+            self.r2g1b1.place(relx=0.8,rely=0,relwidth=0.2,relheight=0.5)
+            self.r2g1b2.place(relx=0.8,rely=0.5,relwidth=0.2,relheight=0.5)
+        if ((self.r2g2t1['text']!='TBD') & (self.r2g2t2['text']!='TBD') & (self.r2g2w1['text'] != '4') & (self.r2g2w2['text'] != '4')):
+            self.r2g2b1.place(relx=0.8,rely=0,relwidth=0.2,relheight=0.5)
+            self.r2g2b2.place(relx=0.8,rely=0.5,relwidth=0.2,relheight=0.5)
+
+        if ((self.r3g1t1['text']!='TBD') & (self.r3g1t2['text']!='TBD') & (self.r3g1w1['text'] != '4') & (self.r3g1w2['text'] != '4')):
+            self.r3g1b1.place(relx=0.8,rely=0,relwidth=0.2,relheight=0.5)
+            self.r3g1b2.place(relx=0.8,rely=0.5,relwidth=0.2,relheight=0.5)
+
+    def advanceRound(self):
+        if ((self.r1g1w1['text']=='4') & (self.r2g1t1['text']=='TBD')):
+            self.r2g1t1['text'] = self.r1g1t1['text']
+            self.matchups.loc[(self.matchups['Round']==2) & (self.matchups['Game']==1),'Team1'] = self.r1g1t1['text']
+            self.r2g1r1['text'] = self.r1g1r1['text']
+            self.matchups.loc[(self.matchups['Round']==2) & (self.matchups['Game']==1),'Rank1'] = self.r1g1r1['text']
+        elif ((self.r1g1w2['text']=='4') & (self.r2g1t1['text']=='TBD')):
+            self.r2g1t1['text'] = self.r1g1t2['text']
+            self.matchups.loc[(self.matchups['Round']==2) & (self.matchups['Game']==1),'Team1'] = self.r1g1t2['text']
+            self.r2g1r1['text'] = self.r1g1r2['text']
+            self.matchups.loc[(self.matchups['Round']==2) & (self.matchups['Game']==1),'Rank1'] = self.r1g1r2['text']
+        elif ((self.r1g2w1['text']=='4') & (self.r2g1t2['text']=='TBD')):
+            self.r2g1t2['text'] = self.r1g2t1['text']
+            self.matchups.loc[(self.matchups['Round']==2) & (self.matchups['Game']==1),'Team2'] = self.r1g2t1['text']
+            self.r2g1r2['text'] = self.r1g2r1['text']
+            self.matchups.loc[(self.matchups['Round']==2) & (self.matchups['Game']==1),'Rank2'] = self.r1g2r1['text']
+        elif ((self.r1g2w2['text']=='4') & (self.r2g1t2['text']=='TBD')):
+            self.r2g1t2['text'] = self.r1g2t2['text']
+            self.matchups.loc[(self.matchups['Round']==2) & (self.matchups['Game']==1),'Team2'] = self.r1g2t2['text']
+            self.r2g1r2['text'] = self.r1g2r2['text']
+            self.matchups.loc[(self.matchups['Round']==2) & (self.matchups['Game']==1),'Rank2'] = self.r1g2r2['text']
+        elif ((self.r1g3w1['text']=='4') & (self.r2g2t1['text']=='TBD')):
+            self.r2g2t1['text'] = self.r1g3t1['text']
+            self.matchups.loc[(self.matchups['Round']==2) & (self.matchups['Game']==2),'Team1'] = self.r1g3t1['text']
+            self.r2g2r1['text'] = self.r1g3r1['text']
+            self.matchups.loc[(self.matchups['Round']==2) & (self.matchups['Game']==2),'Rank1'] = self.r1g3r1['text']
+        elif ((self.r1g3w2['text']=='4') & (self.r2g2t1['text']=='TBD')):
+            self.r2g2t1['text'] = self.r1g3t2['text']
+            self.matchups.loc[(self.matchups['Round']==2) & (self.matchups['Game']==2),'Team1'] = self.r1g3t2['text']
+            self.r2g2r1['text'] = self.r1g3r2['text']
+            self.matchups.loc[(self.matchups['Round']==2) & (self.matchups['Game']==2),'Rank1'] = self.r1g3r2['text']
+        elif ((self.r1g4w1['text']=='4') & (self.r2g2t2['text']=='TBD')):
+            self.r2g2t2['text'] = self.r1g4t1['text']
+            self.matchups.loc[(self.matchups['Round']==2) & (self.matchups['Game']==2),'Team2'] = self.r1g4t1['text']
+            self.r2g2r2['text'] = self.r1g4r1['text']
+            self.matchups.loc[(self.matchups['Round']==2) & (self.matchups['Game']==2),'Rank2'] = self.r1g4r1['text']
+        elif ((self.r1g4w2['text']=='4') & (self.r2g2t2['text']=='TBD')):
+            self.r2g2t2['text'] = self.r1g4t2['text']
+            self.matchups.loc[(self.matchups['Round']==2) & (self.matchups['Game']==2),'Team2'] = self.r1g4t2['text']
+            self.r2g2r2['text'] = self.r1g4r2['text']
+            self.matchups.loc[(self.matchups['Round']==2) & (self.matchups['Game']==2),'Rank2'] = self.r1g4r2['text']
+
+        elif ((self.r2g1w1['text']=='4') & (self.r3g1t1['text']=='TBD')):
+            self.r3g1t1['text'] = self.r2g1t1['text']
+            self.matchups.loc[(self.matchups['Round']==3) & (self.matchups['Game']==1),'Team1'] = self.r2g1t1['text']
+            self.r3g1r1['text'] = self.r2g1r1['text']
+            self.matchups.loc[(self.matchups['Round']==3) & (self.matchups['Game']==1),'Rank1'] = self.r2g1r1['text']
+        elif ((self.r2g1w2['text']=='4') & (self.r3g1t1['text']=='TBD')):
+            self.r3g1t1['text'] = self.r2g1t2['text']
+            self.matchups.loc[(self.matchups['Round']==3) & (self.matchups['Game']==1),'Team1'] = self.r2g1t2['text']
+            self.r3g1r1['text'] = self.r2g1r2['text']
+            self.matchups.loc[(self.matchups['Round']==3) & (self.matchups['Game']==1),'Rank1'] = self.r2g1r2['text']
+        elif ((self.r2g2w1['text']=='4') & (self.r3g1t2['text']=='TBD')):
+            self.r3g1t2['text'] = self.r2g2t1['text']
+            self.matchups.loc[(self.matchups['Round']==3) & (self.matchups['Game']==1),'Team2'] = self.r2g2t1['text']
+            self.r3g1r2['text'] = self.r2g2r1['text']
+            self.matchups.loc[(self.matchups['Round']==3) & (self.matchups['Game']==1),'Rank2'] = self.r2g2r1['text']
+        elif ((self.r2g2w2['text']=='4') & (self.r3g1t2['text']=='TBD')):
+            self.r3g1t2['text'] = self.r2g2t2['text']
+            self.matchups.loc[(self.matchups['Round']==3) & (self.matchups['Game']==1),'Team2'] = self.r2g2t2['text']
+            self.r3g1r2['text'] = self.r2g2r2['text']
+            self.matchups.loc[(self.matchups['Round']==3) & (self.matchups['Game']==1),'Rank2'] = self.r2g2r2['text']
+        self.writeMatchups()
+        self.createButtons()
 
     def setResults(self, round_num, game, team):
         if round_num == 1:
             if game == 1:
-                #forget the button
+                self.r1g1b1.place_forget()
+                self.r1g1b2.place_forget()
                 if team == 1:
-                    #add 1 to team 1s wins in gui and matchups df
-                    #if wins == 4 then move team on to next round
-                    return
+                    self.matchups.loc[(self.matchups['Round']==1) & (self.matchups['Game']==1), 'Win1'] +=1
+                    self.r1g1w1['text'] = self.matchups[(self.matchups['Round']==1) & (self.matchups['Game']==1)].iloc[0]['Win1']
+                    self.r1g1b1['text'] = self.matchups[(self.matchups['Round']==1) & (self.matchups['Game']==1)].iloc[0]['Win1']
                 else:
-                    #add 1 to team 2s wins
-                    return
+                    self.matchups.loc[(self.matchups['Round']==1) & (self.matchups['Game']==1), 'Win2'] +=1
+                    self.r1g1w2['text'] = self.matchups[(self.matchups['Round']==1) & (self.matchups['Game']==1)].iloc[0]['Win2']
+                    self.r1g1b2['text'] = self.matchups[(self.matchups['Round']==1) & (self.matchups['Game']==1)].iloc[0]['Win2']
+
             elif game ==2:
+                self.r1g2b1.place_forget()
+                self.r1g2b2.place_forget()
                 if team == 1:
-                    #add 1 to team 1s wins
-                    return
+                    self.matchups.loc[(self.matchups['Round']==1) & (self.matchups['Game']==2), 'Win1'] +=1
+                    self.r1g2w1['text'] = self.matchups[(self.matchups['Round']==1) & (self.matchups['Game']==2)].iloc[0]['Win1']
+                    self.r1g2b1['text'] = self.matchups[(self.matchups['Round']==1) & (self.matchups['Game']==2)].iloc[0]['Win1']
                 else:
-                    #add 1 to team 2s wins
-                    return
+                    self.matchups.loc[(self.matchups['Round']==1) & (self.matchups['Game']==2), 'Win2'] +=1
+                    self.r1g2w2['text'] = self.matchups[(self.matchups['Round']==1) & (self.matchups['Game']==2)].iloc[0]['Win2']
+                    self.r1g2b2['text'] = self.matchups[(self.matchups['Round']==1) & (self.matchups['Game']==2)].iloc[0]['Win2']
+
             elif game ==3:
+                self.r1g3b1.place_forget()
+                self.r1g3b2.place_forget()
                 if team == 1:
-                    #add 1 to team 1s wins
-                    return
+                    self.matchups.loc[(self.matchups['Round']==1) & (self.matchups['Game']==3), 'Win1'] +=1
+                    self.r1g3w1['text'] = self.matchups[(self.matchups['Round']==1) & (self.matchups['Game']==3)].iloc[0]['Win1']
+                    self.r1g3b1['text'] = self.matchups[(self.matchups['Round']==1) & (self.matchups['Game']==3)].iloc[0]['Win1']
                 else:
-                    #add 1 to team 2s wins
-                    return
+                    self.matchups.loc[(self.matchups['Round']==1) & (self.matchups['Game']==3), 'Win2'] +=1
+                    self.r1g3w2['text'] = self.matchups[(self.matchups['Round']==1) & (self.matchups['Game']==3)].iloc[0]['Win2']
+                    self.r1g3b2['text'] = self.matchups[(self.matchups['Round']==1) & (self.matchups['Game']==3)].iloc[0]['Win2']
+
             else:
+                self.r1g4b1.place_forget()
+                self.r1g4b2.place_forget()
                 if team == 1:
-                    #add 1 to team 1s wins
-                    return
+                    self.matchups.loc[(self.matchups['Round']==1) & (self.matchups['Game']==4), 'Win1'] +=1
+                    self.r1g4w1['text'] = self.matchups[(self.matchups['Round']==1) & (self.matchups['Game']==4)].iloc[0]['Win1']
+                    self.r1g4b1['text'] = self.matchups[(self.matchups['Round']==1) & (self.matchups['Game']==4)].iloc[0]['Win1']
                 else:
-                    #add 1 to team 2s wins
-                    return
+                    self.matchups.loc[(self.matchups['Round']==1) & (self.matchups['Game']==4), 'Win2'] +=1
+                    self.r1g4w2['text'] = self.matchups[(self.matchups['Round']==1) & (self.matchups['Game']==4)].iloc[0]['Win2']
+                    self.r1g4b2['text'] = self.matchups[(self.matchups['Round']==1) & (self.matchups['Game']==4)].iloc[0]['Win2']
+
         elif round_num == 2:
             if game == 1:
+                self.r2g1b1.place_forget()
+                self.r2g1b2.place_forget()
                 if team == 1:
-                    #add 1 to team 1s wins
-                    return
+                    self.matchups.loc[(self.matchups['Round']==2) & (self.matchups['Game']==1), 'Win1'] +=1
+                    self.r2g1w1['text'] = self.matchups[(self.matchups['Round']==2) & (self.matchups['Game']==1)].iloc[0]['Win1']
+                    self.r2g1b1['text'] = self.matchups[(self.matchups['Round']==2) & (self.matchups['Game']==1)].iloc[0]['Win1']
                 else:
-                    #add 1 to team 2s wins
-                    return
-            else:
-                if team == 1:
-                    #add 1 to team 1s wins
-                    return
-                else:
-                    #add 1 to team 2s wins
-                    return
-        else:
-                if game == 1:
-                    if team == 1:
-                        #add 1 to team 1s wins
-                        return
-                    else:
-                        #add 1 to team 2s wins
-                        return
+                    self.matchups.loc[(self.matchups['Round']==2) & (self.matchups['Game']==1), 'Win2'] +=1
+                    self.r2g1w2['text'] = self.matchups[(self.matchups['Round']==2) & (self.matchups['Game']==1)].iloc[0]['Win2']
+                    self.r2g1b2['text'] = self.matchups[(self.matchups['Round']==2) & (self.matchups['Game']==1)].iloc[0]['Win2']
 
-        #here when i click on the wins button i want to place forget the buttons and replace them with labels
-        #if the wins bar goes to 4 then I want to move them to the next round
-        #at the end of this I want to go back and show any buttons 
-        return
+            else:
+                self.r2g2b1.place_forget()
+                self.r2g2b2.place_forget()
+                if team == 1:
+                    self.matchups.loc[(self.matchups['Round']==2) & (self.matchups['Game']==2), 'Win1'] +=1
+                    self.r2g2w1['text'] = self.matchups[(self.matchups['Round']==2) & (self.matchups['Game']==2)].iloc[0]['Win1']
+                    self.r2g2b1['text'] = self.matchups[(self.matchups['Round']==2) & (self.matchups['Game']==2)].iloc[0]['Win1']
+                else:
+                    self.matchups.loc[(self.matchups['Round']==2) & (self.matchups['Game']==2), 'Win2'] +=1
+                    self.r2g2w2['text'] = self.matchups[(self.matchups['Round']==2) & (self.matchups['Game']==2)].iloc[0]['Win2']
+                    self.r2g2b2['text'] = self.matchups[(self.matchups['Round']==2) & (self.matchups['Game']==2)].iloc[0]['Win2']
+
+        else:
+            if game == 1:
+                self.r3g1b1.place_forget()
+                self.r3g1b2.place_forget()
+                if team == 1:
+                    self.matchups.loc[(self.matchups['Round']==3) & (self.matchups['Game']==1), 'Win1'] +=1
+                    self.r3g1w1['text'] = self.matchups[(self.matchups['Round']==3) & (self.matchups['Game']==1)].iloc[0]['Win1']
+                    self.r3g1b1['text'] = self.matchups[(self.matchups['Round']==3) & (self.matchups['Game']==1)].iloc[0]['Win1']
+                else:
+                    self.matchups.loc[(self.matchups['Round']==3) & (self.matchups['Game']==1), 'Win2'] +=1
+                    self.r3g1w2['text'] = self.matchups[(self.matchups['Round']==3) & (self.matchups['Game']==1)].iloc[0]['Win2']
+                    self.r3g1b2['text'] = self.matchups[(self.matchups['Round']==3) & (self.matchups['Game']==1)].iloc[0]['Win2']
+
+        self.advanceRound()
 
     def getMatchups(self):
-        self.matchups = pd.read_csv('PlayoffSchedule.csv')
+        matchups = pd.read_csv('PlayoffSchedule.csv')
+        return matchups
 
-    def getRecords(self):
-        #grab the playoff df
-        #deprecate this
-        return
+    def writeMatchups(self):
+        self.matchups.to_csv('PlayoffSchedule.csv',index=False)
 """
 To Do:
--fix scheduler to be in different format
--create a rankings csv
--create a hide status for the current week
-
-
+-i need to fix the games, rn 1 and 2 play in the second round
 """

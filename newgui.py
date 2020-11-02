@@ -25,7 +25,7 @@ class SampleApp(tk.Tk):
         container.grid_columnconfigure(0, weight=1)
 
         self.frames = {}
-        for F in (StartPage, PageOne, PageTwo, Draft, WIP, Home, Results, Standings, CreatingNew, CreatedNew):
+        for F in (StartPage, PageOne, PageTwo, Draft, WIP, Home, Results, Standings, CreatingNew, CreatedNew, PlayoffResults):
             page_name = F.__name__
             frame = F(parent=container, controller=self)
             self.frames[page_name] = frame
@@ -67,6 +67,8 @@ class StartPage(tk.Frame):
                             command=lambda: controller.show_frame("Standings"))
         newbutton = tk.Button(self, text="Go to New Season Test",
                             command=lambda: self.newSeason())
+        playbutton = tk.Button(self, text="Go to New Season Test",
+                            command=lambda: controller.show_frame("PlayoffResults"))
         button1.pack()
         button2.pack()
         draftbutton.pack()
@@ -75,6 +77,7 @@ class StartPage(tk.Frame):
         resultsbutton.pack()
         standingsbutton.pack()
         newbutton.pack()
+        playbutton.pack()
 
 
     def newSeason(self):
